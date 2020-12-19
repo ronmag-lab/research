@@ -1,0 +1,138 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2513
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 #plot the scans:\
+exp_name = 'calssifier_sets_png'\
+for file_num in range(0,1):\
+    file = open(f'l3_noise_results/\{exp_name\}_\{file_num\}.txt','r')\
+    lines = file.readlines() \
+    for i in range(1,len(lines),3):\
+        set_line = re.sub(r"\\s+", " ", lines[i]).strip()\
+        set_scan_origin = [9 if int(s) == -1 else int(s) for s in set_line.split(' ') ]\
+        set_scan = np.asarray(set_scan_origin)\
+        plt.figure(figsize=(20,5))\
+        plt.plot(set_scan)\
+        plt.ylim([0, 10]) \
+        plt.xlabel("number of sample")\
+        plt.ylabel("number of cache misses")\
+        plt.title(f'\{file_num\}, \{lines[i-1]\}') \
+        plt.show()\
+\
+#normalize the scans into a new array: input is the original scan as an nparray \
+#  lines = file.readlines() \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 #   for i in range(1,len(lines),3):\
+#      set_line = re.sub(r"\\s+", " ", lines[i]).strip()\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 #set_scan_origin = [9 if int(s) == -1 else int(s) for s in set_line.split(' ') ]\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 #        set_scan = np.asarray(set_scan_origin)\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+height = 1\
+intervals = 100  #200,500 shows good results\
+            \
+def normalize_scan_to_binary(set_scan):\
+    intervals = 100  # 200,500 shows good results also did 110 and 20 last were 0\
+    true_intervals = []\
+    for i in range(0, len(set_scan), intervals):\
+        zero_counter = 0\
+        for j in range(i, i + intervals):\
+            if set_scan[j] == 0:\
+                zero_counter = zero_counter + 1\
+        if zero_counter > intervals * 0.2:\
+            true_intervals.append(0)\
+        else:\
+            true_intervals.append(height)\
+    clean_ones(true_intervals)\
+    return true_intervals\
+\
+\
+#the classification code:\
+min_correct = 2\
+max_correct = 6\
+\
+def detect_step(set_scan, next_index, excpected_label):\
+    count_hights = 0\
+    while next_index < len(set_scan) and set_scan[next_index] == excpected_label:\
+        next_index += 1\
+        count_hights += 1\
+    if not 2 <= count_hights <= 6:\
+        return False, next_index\
+    else:\
+        return True, next_index\
+\
+\
+def classify_second_set(set_scan): #3 ups\
+    error = 0\
+    correct = 0\
+    next_index = 0\
+    number_of_height = set_scan.count(height)\
+    if number_of_height > 400 or number_of_height == 0:\
+        return False\
+    while next_index < len(set_scan) and height in set_scan[next_index:]:\
+        round_success = False\
+        next_index = set_scan[next_index:].index(height) + next_index\
+        success, next_index = detect_step(set_scan, next_index, height)\
+        if success:\
+            success, next_index = detect_step(set_scan, next_index, 0)\
+            if success:\
+                success, next_index = detect_step(set_scan, next_index, height)\
+                if success:\
+                    success, next_index = detect_step(set_scan, next_index, 0)\
+                    if success:\
+                        success, next_index = detect_step(set_scan, next_index, height)\
+                        if success:\
+                            round_success = True\
+        if round_success:\
+            correct += 1\
+        else:\
+            error += 1\
+    if error / (error + correct) > 0.5 or correct < min_correct or correct >= max_correct:  # can't be 0\
+        return False\
+    return True\
+\
+\
+def classify_third_set(set_scan): #2 ups\
+    error = 0\
+    correct = 0\
+    next_index = 0\
+    number_of_height = set_scan.count(height)\
+    if number_of_height > 400 or number_of_height < 5:\
+        return False\
+    while next_index < len(set_scan) and height in set_scan[next_index:]:\
+        round_success = False\
+        next_index = set_scan[next_index:].index(height) + next_index\
+        success, next_index = detect_step(set_scan, next_index, height)\
+        if success:\
+            success, next_index = detect_step(set_scan, next_index, 0)\
+            if success:\
+                success, next_index = detect_step(set_scan, next_index, height)\
+                if success:\
+                    round_success = True\
+        if round_success:\
+            correct += 1\
+        else:\
+            error += 1\
+    if error / (error + correct) > 0.5 or correct <= min_correct or correct >= max_correct:  # can't be 0\
+        return False\
+    return True\
+\
+def classify_set(set_line):\
+    set_scan = [9 if int(s) == -1 else int(s) for s in set_line.split(' ')]\
+    set_scan = np.asarray(set_scan)\
+    set_scan = normalize_scan_to_binary(set_scan)\
+    if classify_second_set(set_scan):\
+        return 0\
+    if classify_third_set(set_scan):\
+        return 1\
+    return 2\
+\
+\
+\
+\
+        }
