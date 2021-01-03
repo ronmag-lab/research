@@ -1,0 +1,71 @@
+<html>
+
+    <style>
+        
+        .scaler {
+            transform: scale(3, 3);
+            transform-origin: 0px 0px;
+            image-rendering: crisp-edges; /* for chrome write pixelated*/
+        }
+        
+        .chop {
+            overflow: hidden;
+            width:1px;
+            height:2px;
+        }
+        
+        .positioner {
+            /*transform: translate(-11px, -11px); */
+            transform-origin: 0px 0px;
+        }
+
+        .border {  
+            border-top: 3px solid rgb(100,100,100);
+         }
+
+         .span{
+             height: 3px;
+             width: 3px;
+         } 
+    
+        </style>
+        
+        
+        <div class="filter">
+            <div class="span">
+                <div class="border">
+                    <div class="scaler">
+                        <div class="chop">
+                            <div id = "positioner" class="positioner">
+                                <img id="myImg" src="backgrounds/images/gradiant_to_restore_4X4.bmp"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function getQueryStringParam(param) {
+                var url = window.location.toString();
+                url.match(/\?(.+)$/);
+                var params = RegExp.$1;
+                params = params.split("&");
+                var queryStringList = {};
+                for (var i = 0; i < params.length; i++) {
+                    var tmp = params[i].split("=");
+                    queryStringList[tmp[0]] = unescape(tmp[1]);
+                }
+                return queryStringList[param];
+            
+            }
+            var x_start = getQueryStringParam("x_start");
+            var y_start = getQueryStringParam("y_start");
+            x_start = 3
+            y_start = 2
+            var final_string = "translate(-" + x_start + "px, -" + y_start + "px)";
+            document.getElementById("positioner").style.transform = final_string;
+            //document.getElementById("positioner").style.borderTop = "1px dashed red"
+            //document.getElementById("myImg").style.borderTop = "1px solid red";
+            //alert(document.getElementById("myImg").style.borderTop);
+        </script>
+</html>
