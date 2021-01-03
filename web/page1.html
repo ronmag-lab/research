@@ -3,7 +3,7 @@
     <style>
         
         .scaler {
-            transform: scale(3, 3);
+            transform: scale(10, 10);
             transform-origin: 0px 0px;
             image-rendering: crisp-edges; /* for chrome write pixelated*/
         }
@@ -19,13 +19,13 @@
             transform-origin: 0px 0px;
         }
 
-        .border {  
-            border-top: 3px solid rgb(100,100,100);
+        .border {  /* this is for adding the top border on top of the currently stolen pixels */
+            border-top: 10px solid rgb(100,100,100);
          }
 
-         .span{
-             height: 3px;
-             width: 3px;
+         .span{ /* this is for restricting the area of the border*/
+             height: 10px;
+             width: 10px;
          } 
     
         </style>
@@ -37,7 +37,7 @@
                     <div class="scaler">
                         <div class="chop">
                             <div id = "positioner" class="positioner">
-                                <img id="myImg" src="backgrounds/images/gradiant_to_restore_4X4.bmp"/>
+                                <img src="backgrounds/images/gradiant_to_restore_4X4.bmp"/>
                             </div>
                         </div>
                     </div>
@@ -45,6 +45,10 @@
             </div>
         </div>
         <script>
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
             function getQueryStringParam(param) {
                 var url = window.location.toString();
                 url.match(/\?(.+)$/);
@@ -56,16 +60,20 @@
                     queryStringList[tmp[0]] = unescape(tmp[1]);
                 }
                 return queryStringList[param];
-            
             }
-            var x_start = getQueryStringParam("x_start");
-            var y_start = getQueryStringParam("y_start");
-            x_start = 3
-            y_start = 2
-            var final_string = "translate(-" + x_start + "px, -" + y_start + "px)";
-            document.getElementById("positioner").style.transform = final_string;
-            //document.getElementById("positioner").style.borderTop = "1px dashed red"
-            //document.getElementById("myImg").style.borderTop = "1px solid red";
-            //alert(document.getElementById("myImg").style.borderTop);
+
+            /*var x_start = getQueryStringParam("x_start");
+            var y_start = getQueryStringParam("y_start");*/
+            for(i=0; i<4;i++){
+                for(j = 0;j<4;j=j+2){
+                    var x_start=i;
+                    var y_start=j;
+                    var final_string = "translate(-" + x_start + "px, -" + y_start + "px)";
+                    document.getElementById("positioner").style.transform = final_string;
+                    alert(final_string);
+                }
+            }
+            /*var final_string = "translate(-" + x_start + "px, -" + y_start + "px)";
+            document.getElementById("positioner").style.transform = final_string;*/
         </script>
 </html>
