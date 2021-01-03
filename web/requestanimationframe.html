@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>CodePen - apply a filter to a webpage with params</title>
+  <style>
+    #iframeContainer {}
+</style>
+</head>
+
+<body translate="no">
+</head>
+<body translate="no">
+<iframe style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; border: 0; "  id = "imageFrame"></iframe>
+
+ 
+  <script id="rendered-js">
+
+var imageUrl = "";
+
+function getQueryStringParam(param) {
+      var url = window.location.toString();
+      url.match(/\?(.+)$/);
+      var params = RegExp.$1;
+      params = params.split("&");
+      var queryStringList = {};
+      for (var i = 0; i < params.length; i++) {
+        var tmp = params[i].split("=");
+        queryStringList[tmp[0]] = unescape(tmp[1]);
+      }
+      return queryStringList[param];
+    }
+
+
+    function go() {
+      // Parse the query parameters: image source and filter function
+      var imageSource = getQueryStringParam("image");
+
+      // put the right image
+      if (imageSource == "random") {
+        imageUrl = "http://ec2-18-206-203-46.compute-1.amazonaws.com/component_random_tables.html";
+      }
+      if (imageSource == "shift_little") {
+        imageUrl = "http://ec2-18-206-203-46.compute-1.amazonaws.com/component_transfer_funcG_shift_tables.html";
+      }
+      if (imageSource == "shift_lots") {
+        imageUrl = "http://ec2-18-206-203-46.compute-1.amazonaws.com/component_transfer_shiftTable_lots.html";
+      }
+      if (imageSource == "all"){
+        imageUrl = "http://ec2-18-206-203-46.compute-1.amazonaws.com/fefilters.html";
+      }
+      if (imageSource == "scan"){
+        imageUrl = "http://ec2-18-206-203-46.compute-1.amazonaws.com/scan.html";
+      }
+
+
+     render();
+    }
+
+    function render() {
+      document.getElementById("imageFrame").src = imageUrl;
+      requestAnimationFrame(render);
+    }
+
+
+    window.onload = go();
+  </script>
+</body>
+
+</html>

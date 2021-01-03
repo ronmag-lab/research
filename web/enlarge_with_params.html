@@ -1,0 +1,53 @@
+<html>
+
+    <style>
+        
+        .scaler {
+            transform: scale(600, 150);
+            transform-origin: 0px 0px;
+            image-rendering: crisp-edges; /* for chrome write pixelated*/
+        }
+        
+        .chop {
+            width: 1px;
+            height: 5px;
+            overflow: hidden;
+        }
+        
+        .positioner {
+            /*transform: translate(-11px, -11px); */
+            transform-origin: 0px 0px;
+        }
+    
+        </style>
+        
+        
+        <div class="filter">
+            <div class="scaler">
+                <div class="chop">
+                    <div id = "positioner" class="positioner">
+                        <img src="backgrounds/images/gradiant_to_restore_4X4.bmp" style="border: 1px solid rgb(100, 100, 100);" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function getQueryStringParam(param) {
+                var url = window.location.toString();
+                url.match(/\?(.+)$/);
+                var params = RegExp.$1;
+                params = params.split("&");
+                var queryStringList = {};
+                for (var i = 0; i < params.length; i++) {
+                    var tmp = params[i].split("=");
+                    queryStringList[tmp[0]] = unescape(tmp[1]);
+                }
+                return queryStringList[param];
+            
+            }
+            var x_start = getQueryStringParam("x_start");
+            var y_start = getQueryStringParam("y_start");
+            var final_string = "translate(-" + x_start + "px, -" + y_start + "px)";
+            document.getElementById("positioner").style.transform = final_string;
+        </script>
+</html>

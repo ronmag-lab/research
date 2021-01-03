@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CodePen - svg feMorphology</title>
+<style>
+html, body {
+  height: 100%;
+  width: 100%;
+}
+</style>
+</head>
+<body translate="no">
+<svg id=mysvg width="100vw" height="100vh" image-rendering="">
+<defs>
+<filter id="dilate">
+<feMorphology id="morph" operator="erode" radius="0" />
+</filter>
+<animate xlink:href="#morph" id="anim-dialiate" attributeName="radius" values="0;26;0" dur="10s" repeatCount="indefinite" />
+</defs>
+</svg>
+
+<iframe src=http://ec2-18-206-203-46.compute-1.amazonaws.com/backgrounds/blackpy.png style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; border: 0; filter:url(#dilate)"></iframe>
+</body>
+</html>
+<!-- for commponent transfer
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="1000" height="1000">
+  <filter id="myfilter" > 
+  </filter>
+  <image href="http://ec2-18-206-203-46.compute-1.amazonaws.com/backgrounds/noisepy.png" filter="url(#myfilter)" height="1000" width="1000"/>
+</svg>
+-->

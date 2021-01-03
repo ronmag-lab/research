@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+</head>
+<!------filters: dilate,erode,pontlight,DistantLight,SpotLight,specOut,ConvolveMatrix,colormatrix,DisplacementMap-->
+<body translate="no">
+<!--------- femorpholofy ----------------------->
+    <svg>
+        <defs>
+        <filter id="dilate">
+        <feMorphology id="morph" operator="dilate" radius="0" />
+        </filter>
+        <animate xlink:href="#morph" id="anim-dialiate" attributeName="radius" values="0;150;0" dur="1s" repeatCount="indefinite" />
+        </defs>
+        </svg>
+
+        <svg id=mysvg width="100vw" height="100vh" image-rendering="">
+            <defs>
+            <filter id="erode">
+            <feMorphology id="morph" operator="erode" radius="0" />
+            </filter>
+            <animate xlink:href="#morph" id="anim-dialiate" attributeName="radius" values="0;150;0" dur="10s" repeatCount="indefinite" />
+            </defs>
+            </svg>
+<!--------------------------- feDiffuseLightin - all kinds of light ------------------------------------>
+
+<svg >
+
+    
+    <defs>
+        <pattern id="img1" patternUnits="userSpaceOnUse" width="100" height="100">
+          <image xlink:href="http://ec2-18-206-203-46.compute-1.amazonaws.com/backgrounds/black150.png" x="0" y="0" width="100" height="100" />
+        </pattern>
+      </defs>
+  
+    <!-- the light source is a fePointLight element -->
+    <filter id="PointLight">
+      <feDiffuseLighting id ="plight" in="SourceGraphic" result="light"
+          lighting-color="white">
+        <fePointLight x="150" y="60" z="20" />
+      </feDiffuseLighting>
+  </filter>
+  <animate xlink:href="#plight" id="anim-plight" attributeName="radius" values="0;150;0" dur="1s" repeatCount="indefinite" />
+      
+    <!-- the light source is a feDistantLight element -->
+    <filter id="DistantLight">
+      <feDiffuseLighting in="SourceGraphic" result="light"
+          lighting-color="white">
+        <feDistantLight azimuth="240" elevation="20"/>
+      </feDiffuseLighting>
+  
+      <feComposite in="SourceGraphic" in2="light"
+                   operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/>
+    </filter>
+  
+  
+    <!-- the light source is a feSpotLight source -->
+    <filter id="SpotLight">
+      <feDiffuseLighting in="SourceGraphic" result="light"
+          lighting-color="white">
+        <feSpotLight x="360" y="5" z="30" limitingConeAngle="20"
+                     pointsAtX="390" pointsAtY="80" pointsAtZ="0"/>
+      </feDiffuseLighting>
+  
+      <feComposite in="SourceGraphic" in2="light"
+                   operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/>
+    </filter>
+
+       
+  </svg>
+
+  <svg >
+
+       
+  <filter id = "specOut">
+    <feSpecularLighting result="specOut"
+        specularExponent="20" lighting-color="#bbbbbb">
+      <fePointLight x="50" y="75" z="200"/>
+    </feSpecularLighting>
+    <feComposite in="SourceGraphic" in2="specOut"
+        operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+  </filter>
+  </svg>
+
+  <!--------------------------- feConvolveMatrix - simple example ------------------------------------>
+
+  <svg >
+  <defs>
+    <filter id="ConvolveMatrix">
+      <feConvolveMatrix
+          kernelMatrix="3 0 0
+                        0 0 0
+                        0 0 -3"/>
+    </filter>
+  </defs>
+
+</svg>
+
+<!--------------------------- feDisplacementMap - simple example ------------------------------------> 
+
+<svg >
+  <filter id="DisplacementMap">
+    <feTurbulence type="turbulence" baseFrequency="0.05"
+        numOctaves="2" result="turbulence"/>
+    <feDisplacementMap in2="turbulence" in="SourceGraphic"
+        scale="50" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+
+</svg>
+
+<!--------------------------- fecolormatrix - simple example ------------------------------------> 
+
+<svg >
+     <filter id="colormatrix">
+        <feColorMatrix in="SourceGraphic"
+            type="matrix"
+            values="1 0 0 0 0
+                    0 1 0 1 0
+                    0 0 0 1 0
+                    0 0 0 1 0" />
+       </filter> 
+
+</svg>
+<!--------------------------- feComponentTransfer - simple example ------------------------------------> 
+<svg >
+<filter id="posterize">
+    <feComponentTransfer>
+        <feFuncR type="discrete" tableValues="0.00011170866928200684 0.0010295234437236456 0.007283019200180929 0.01068788159922085 0.011497857461364336 0.019364627979781113 0.021076222685659896 0.021951857101198513 0.022933343218139668 0.023101028609857854 0.03586775006191001 0.03706536402451577 0.04228496382730684 0.044439776440909906 0.04751714157832576 0.049149164557175995 0.05184431623497188 0.05311569836949004 0.05390791365570047 0.05888401638598695 0.06953452713502117 0.08090285219566284 0.08791791337164445 0.0886648565442022 0.09057992025471717 0.09837704492396082 0.10011146982172003 0.10019270818703707 0.10267736336945466 0.10368425786462065 0.10787375946486999 0.11932812707758311 0.12873549634197246 0.12896642676578762 0.13478990899857501 0.13484318842296728 0.13525527851978647 0.13852832402610538 0.1402419703572544 0.14438683393879326 0.15341533226699677 0.15865322950560812 0.16718955184688677 0.1696492266247165 0.17241373800912096 0.17593806682147983 0.17957340696016044 0.17973772902447616 0.1815654697153436 0.1855305541172788 0.18996532713065517 0.19479424460303862 0.19789395519109276 0.19839177574009503 0.1993462261620349 0.2024794298295951 0.20595252496325955 0.2083788085844166 0.21033999544193926 0.2117159248656516 0.21645083765763173 0.21649665901698212 0.21769167313725546 0.21808228197611446 0.2186295993421089 0.21877175027100926 0.22159642678214775 0.2285041387695358 0.22993285196031332 0.23245763411853382 0.24159261658093445 0.24171882065363315 0.24187883544543776 0.2434827700125618 0.252485526833482 0.2642888075692279 0.2779821863649302 0.2785067423706058 0.2830044736658137 0.2857885620558668 0.28675579718153976 0.2869283074995307 0.2945971926280968 0.29765578421590166 0.30030290260878356 0.3012576493369381 0.3066205196451621 0.3081715620219999 0.31869093975932217 0.3187512149049905 0.3252533901326997 0.34007485148854155 0.3448223028170633 0.347189757836308 0.34974155415226715 0.35330998882536446 0.35347435535015526 0.3599972265859389 0.3603019288424686 0.3672600128089515 0.3713567498569994 0.372097682581946 0.3838195863179207 0.38391395388689975 0.39366602349711155 0.3971212232276339 0.3990239963999872 0.40433110402270556 0.4110285675820029 0.41313915144290847 0.415021328475184 0.4168627378237757 0.42390240380188804 0.44353359356046484 0.45062113522178093 0.45493085802831057 0.45493516764587205 0.4578806802085724 0.4694563720151862 0.4703878109512015 0.4758298886387593 0.4810959526076345 0.48132859664194916 0.4912958494455626 0.4934346314179149 0.5027340701126921 0.5062104603636012 0.5076290412016462 0.5076432405926863 0.5079236137069978 0.511101173171059 0.5122806729053477 0.5284869976372947 0.5309746177689735 0.5319130497556054 0.53454497282869 0.5370900133830442 0.5453781527384622 0.5499889173715466 0.5559099370908521 0.5568981903681314 0.5603789273055364 0.5623573714306245 0.5719228093924585 0.5764199461701024 0.5798937154690428 0.5801518204118576 0.5911003382402412 0.5925999286242822 0.5977828871077588 0.6075200645421557 0.6077616517457896 0.6119721548069772 0.6213168891695929 0.6283085142614943 0.6335525406436466 0.6395199889905766 0.6516601734343278 0.6589484271597518 0.6609106706626704 0.6629267456239092 0.6726829004658712 0.6731874289971023 0.6738778165863308 0.6739968367978296 0.6915956297539092 0.6920616226854744 0.6941975495046734 0.6955598428629232 0.6960374356168307 0.6970092062363537 0.6982540965029909 0.6999929327943609 0.7022939982957768 0.7056535882897315 0.7080041194668519 0.7129591545290396 0.7203759349196304 0.7207307826111484 0.7231836811038678 0.7237445567336656 0.7273327944181099 0.7276837630166685 0.7288929568840695 0.7297203122883745 0.7315927714345591 0.733967779136651 0.7361428887008896 0.7463728300040318 0.7477031476474628 0.7505172143178602 0.7558145030109376 0.7591302556248837 0.7591575163410227 0.7613864316405922 0.7617534184347328 0.7643988615408905 0.7755786987922129 0.7762946835288036 0.7777575490257043 0.7789259704080176 0.7790864170759154 0.781489340424163 0.7861986192728764 0.7922561166434586 0.8033018485434925 0.8058249734905665 0.8082551184816462 0.8134312997365925 0.8153828310925328 0.8241387093935257 0.8243678142091075 0.8297441069913978 0.8311710919220621 0.8317074267888135 0.8325655030383303 0.8362607611352676 0.8370733091227885 0.8458458757684035 0.8466973655458501 0.849871526786929 0.85516813819148 0.8593367592441822 0.8600328935207572 0.8650258838789531 0.866246301172216 0.8716829860913586 0.8751043648787513 0.8838994969908069 0.8862823024809047 0.8951813496098701 0.8992753124683182 0.9016513710985956 0.9033365356802371 0.904713704694178 0.9048157598676121 0.9094362491507237 0.9165208514709511 0.925071640191611 0.9303613493812095 0.9310182842641846 0.9513366579074821 0.9514427509782232 0.9556669917582983 0.9561175749431247 0.9574027387834677 0.9592827051932731 0.964436592416715 0.9680221933894446 0.9704045076084288 0.9729455374156953 0.9756701809988522 0.9791330304597227 0.9905493431898417 0.991065744684045 1.0" />
+    </feComponentTransfer>
+</filter>
+</svg>
+<!---------- end svg ------------------------>
+  <div id="iframeContainer">
+    <iframe frameborder="0" scrolling="no" style="width: 100vw; height: 100vh; overflow: hidden;"
+      id="imageFrame"></iframe>
+  </div>
+  <script id="rendered-js">
+
+    function getQueryStringParam(param) {
+      var url = window.location.toString();
+      url.match(/\?(.+)$/);
+      var params = RegExp.$1;
+      params = params.split("&");
+      var queryStringList = {};
+      for (var i = 0; i < params.length; i++) {
+        var tmp = params[i].split("=");
+        queryStringList[tmp[0]] = unescape(tmp[1]);
+      }
+      return queryStringList[param];
+    }
+
+
+    function go() {
+      // Parse the query parameters: image source and filter function
+      var imageSource = getQueryStringParam("image");
+
+      // Parse the query parameters: image source and filter function
+      var filterType = getQueryStringParam("filter");
+      console.log(filterType);
+
+      var imageUrl = "";
+      // put the right image
+      if (imageSource == "blend") {
+        imageUrl = "blend.html";
+      }
+      if (imageSource == "black") {
+        imageUrl = "backgrounds/blackpy.png";
+      }
+      if (imageSource == "colors") {
+        imageUrl = "backgrounds/noisepy.png";s
+      }
+      
+      document.getElementById("imageFrame").src = imageUrl;
+
+
+      // apply the right filter
+      document.getElementById("iframeContainer").style = "filter:url(#" +  filterType  +");";
+
+    }
+
+
+    window.onload = go();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>CodePen - apply a filter to a webpage with params</title>
+  <style>
+    #iframeContainer {}
+
+    @keyframes saturate-filter {
+      from {
+        filter: saturate(0%);
+      }
+
+      to {
+        filter: saturate(100%);
+      }
+    }
+
+    @keyframes blur-filter {
+      from {
+        filter: blur(0px);
+      }
+
+      to {
+        filter: blur(100px);
+      }
+    }
+
+    @keyframes brightness-filter {
+      from {
+        filter: brightness(0%);
+      }
+
+      to {
+        filter: brightness(100%);
+      }
+    }
+
+    @keyframes sepia-filter {
+      from {
+        filter: sepia(0%);
+      }
+
+      to {
+        filter: sepia(100%);
+      }
+    }
+
+    @keyframes contrast-filter {
+      from {
+        filter: contrast(0%);
+      }
+
+      to {
+        filter: contrast(100%);
+      }
+    }
+
+    @keyframes opacity-filter {
+      from {
+        filter: opacity(0%);
+      }
+
+      to {
+        filter: opacity(100%);
+      }
+    }
+
+    @keyframes invert-filter {
+      from {
+        filter: invert(0%);
+      }
+
+      to {
+        filter: invert(100%);
+      }
+    }
+
+    @keyframes hue-rotate-filter {
+      from {
+        filter: hue-rotate(0);
+      }
+
+      to {
+        filter: hue-rotate(360deg);
+      }
+    }
+
+    @keyframes grayscale-filter {
+      from {
+        filter: grayscale(0%);
+      }
+
+      to {
+        filter: grayscale(100%);
+      }
+    }
+
+    @keyframes drop-shadow-filter {
+      from {
+        filter: drop-shadow(0px 0px);
+      }
+
+      to {
+        filter: drop-shadow(16px 16px 10px black);
+      }
+    }
+  </style>
+</head>
+
+<body translate="no">
+  <div id="iframeContainer">
+    <iframe frameborder="0" scrolling="no" style="width: 100vw; height: 100vh; overflow: hidden;"
+      id="imageFrame" color-interpolation-filters ="sRGB"></iframe>
+  </div>
+  <script id="rendered-js">
+
+    function getQueryStringParam(param) {
+      var url = window.location.toString();
+      url.match(/\?(.+)$/);
+      var params = RegExp.$1;
+      params = params.split("&");
+      var queryStringList = {};
+      for (var i = 0; i < params.length; i++) {
+        var tmp = params[i].split("=");
+        queryStringList[tmp[0]] = unescape(tmp[1]);
+      }
+      return queryStringList[param];
+    }
+
+
+    function go() {
+      // Parse the query parameters: image source and filter function
+      var imageSource = getQueryStringParam("image");
+
+      // Parse the query parameters: image source and filter function
+      var filterType = getQueryStringParam("filter");
+
+      var imageUrl = "";
+      // put the right image
+      if (imageSource == "colors") {
+        imageUrl = "http://ec2-18-206-203-46.compute-1.amazonaws.com/backgrounds/images/small_noise.bmp";
+      }
+      if (imageSource == "black") {
+        imageUrl = "http://ec2-18-206-203-46.compute-1.amazonaws.com/backgrounds/images/blackpy.bmp";
+      }
+      if (imageSource == "second") {
+        imageUrl = "http://ec2-18-206-203-46.compute-1.amazonaws.com/backgrounds/images/pic_100_1000X.bmp";
+      }
+      if (imageSource == "third") {
+        imageUrl = "http://ec2-18-206-203-46.compute-1.amazonaws.com/backgrounds/images/pic_170_1000X.bmp";
+      }
+      if (imageSource == "half") {
+        imageUrl = "http://ec2-18-206-203-46.compute-1.amazonaws.com/backgrounds/images/second_and_third.png";
+      }
+      if (imageSource == "enlarged") {
+        imageUrl = "http://ec2-18-206-203-46.compute-1.amazonaws.com/enlarge_iframe.html";
+      }
+      if (imageSource == "white") {
+        imageUrl = "http://ec2-18-206-203-46.compute-1.amazonaws.com/backgrounds/images/whitepy.bmp";
+      }
+      
+      document.getElementById("imageFrame").src = imageUrl;
+
+
+      // apply the right filter
+      document.getElementById("iframeContainer").style = "animation: " + filterType + "-filter 3s infinite alternate;";
+
+    }
+
+
+    window.onload = go();
+  </script>
+</body>
+
+</html>

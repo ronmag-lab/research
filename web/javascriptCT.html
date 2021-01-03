@@ -1,0 +1,50 @@
+<html>
+    <body>
+        <svg id=mysvg width="100%" height="100%" shape-rendering="optimizeSpeed">
+        <defs>
+            <filter id="myfilter" color-interpolation-filters ="sRGB"> 
+            </filter>
+        </defs>
+        </svg>
+        <iframe src= "/applayfiltersWithparams.html?filter=hue-rotate&image=colors" style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; border: 0; filter:url(#myfilter)"></iframe>
+        <script>
+            var NumberOfTables = 1;
+            //build first table on for R,G,B
+            var svgns="http://www.w3.org/2000/svg";
+            var ct = document.createElementNS(svgns,"feComponentTransfer");
+            ct.setAttributeNS("null","in","SourceGraphic");
+            ct.setAttributeNS("null","result","0");
+            var funcG = document.createElementNS(svgns,"feFuncG")
+            funcG.setAttributeNS("null","type","discrete");
+            funcG.setAttributeNS("null","tableValues","0");
+            ct.appendChild(funcG);
+            var funcR = document.createElementNS(svgns,"feFuncR")
+            funcR.setAttributeNS("null","type","discrete");
+            funcR.setAttributeNS("null","tableValues","0");
+            ct.appendChild(funcR);
+            var funcB = document.createElementNS(svgns,"feFuncB")
+            funcB.setAttributeNS("null","type","discrete");
+            funcB.setAttributeNS("null","tableValues","0");
+            ct.appendChild(funcB);
+            document.getElementById("myfilter").appendChild(ct);
+            for(i=0;i<NumberOfTables;i++){
+                var ct = document.createElementNS(svgns,"feComponentTransfer");
+                ct.setAttributeNS("null","in",""+i);
+                ct.setAttributeNS("null","result",""+(i+1));
+                var funcG = document.createElementNS(svgns,"feFuncG")
+                funcG.setAttributeNS("null","type","discrete");
+                funcG.setAttributeNS("null","tableValues","0");
+                ct.appendChild(funcG);
+                var funcR = document.createElementNS(svgns,"feFuncR")
+                funcR.setAttributeNS("null","type","discrete");
+                funcR.setAttributeNS("null","tableValues","0");
+                ct.appendChild(funcR);
+                var funcB = document.createElementNS(svgns,"feFuncB")
+                funcB.setAttributeNS("null","type","discrete");
+                funcB.setAttributeNS("null","tableValues","0");
+                ct.appendChild(funcB);
+                document.getElementById("myfilter").appendChild(ct);
+            }
+        </script>
+    </body>
+</html>
