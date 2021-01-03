@@ -1,0 +1,39 @@
+
+<defs id = frames width="100%" height="100%">
+</defs>
+<script id="rendered-js">
+ window.onload = function() {
+ var svgns="http://www.w3.org/2000/svg";
+ var iframe_number = 500;
+ var pictures_size = 10;
+ var image_string = getQueryStringParam("image");
+ if (image_string == "small"){
+   console.log("its small");
+   iframe_number = 1;
+ }
+ var myframes = document.getElementById("frames");
+ var pagesrc = "/backgrounds/small_noise.bmp";
+  for (var layer = 0; layer < iframe_number; layer++) {
+        var myIframe = document.createElement('iframe');
+        myIframe.src = pagesrc;
+        var top = (Math.trunc((layer*pictures_size)/iframe_number))*pictures_size;
+        var left = (layer*pictures_size)%iframe_number;
+        myIframe.style = "position: absolute; border: 0; top:"+ top +"; left: " +left+ ";";
+        myframes.appendChild(myIframe);
+ }
+ }
+ 
+
+function getQueryStringParam(param) {
+        var url = window.location.toString();
+        url.match(/\?(.+)$/);
+        var params = RegExp.$1;
+        params = params.split("&");
+        var queryStringList = {};
+        for (var i = 0; i < params.length; i++) {
+          var tmp = params[i].split("=");
+          queryStringList[tmp[0]] = unescape(tmp[1]);
+        }
+        return queryStringList[param];
+      }
+</script>

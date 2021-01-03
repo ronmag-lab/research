@@ -1,0 +1,91 @@
+<svg id=mysvg width="100%" height="100%" shape-rendering="optimizeSpeed">
+    <defs id = defs>
+    </defs>
+    
+ </svg>
+ <defs id = frames>
+</defs>
+ <script id="rendered-js">
+    const DISCRETE_LAYERS = 500;
+    const VALUES_PER_LAYER = 256;
+    
+    
+    window.onload = function() {
+      
+      var svgns="http://www.w3.org/2000/svg";
+    
+      // Create an array with the unshuffled values
+      var unshuffledArray = new Array(VALUES_PER_LAYER);
+      for (i = 0; i < unshuffledArray.length; i++) {
+        unshuffledArray[i] = (i + 65) % 255;
+        if (unshuffledArray[i] < 3){
+            unshuffledArray[i] = 4;
+        }
+        unshuffledArray[0] = 0;
+        unshuffledArray[i] =  unshuffledArray[i] / 255;
+    
+      }
+    
+      // Shuffle the array
+      var shuffledArray = unshuffledArray;
+      var mydefs = document.getElementById("defs");
+      var myframes = document.getElementById("frames");
+      var pagesrc = "/applayfiltersWithparams.html?filter=hue-rotate&image=colors"
+      // create a component transfer from the shuffled array
+      for (var layer = 0; layer < DISCRETE_LAYERS; layer++) {
+        var myIframe = document.createElement('iframe');
+        myIframe.src = pagesrc;
+        var top = (Math.trunc((layer*10)/DISCRETE_LAYERS))*10;
+        var left = (layer*10)%DISCRETE_LAYERS;
+        myIframe.style = "position: absolute; border: 0; top:"+ top +"; left: " +left+ "; filter:url(#f" + layer+ ")"
+        var myfilter = document.createElementNS(svgns,"filter");
+        myfilter.setAttribute("id","f"+layer);
+        var mycT = document.createElementNS(svgns,"feComponentTransfer");
+        mycT.setAttribute("color-interpolation-filters","sRGB")
+        var funcg = document.createElementNS(svgns,"feFuncG");
+        funcg.setAttribute("type","discrete");
+        var funcb = document.createElementNS(svgns,"feFuncB");
+        funcb.setAttribute("type","discrete");
+        var funcr = document.createElementNS(svgns,"feFuncR");
+        funcr.setAttribute("type","discrete");
+        mycT.setAttribute("result",""+(layer+1));
+        if(layer > 0){
+            mycT.setAttribute("in",""+layer);
+        }
+        //var funcb = document.getElementById("funcb_layer" + layer);
+        //var funcr = document.getElementById("funcr_layer" + layer);
+    
+    
+        for (var entry = 0; entry < shuffledArray.length; entry++) {
+          var newNumber = mysvg.createSVGNumber();
+          newNumber.value = shuffledArray[entry] ;
+          funcg.tableValues.baseVal.appendItem(newNumber);
+          funcb.tableValues.baseVal.appendItem(newNumber);
+          funcr.tableValues.baseVal.appendItem(newNumber);
+        }
+    
+        mycT.appendChild(funcg);
+        mycT.appendChild(funcb);
+        mycT.appendChild(funcr);
+        myfilter.appendChild(mycT);
+        mydefs.appendChild(myfilter);
+        myframes.appendChild(myIframe);
+    
+      }
+    }
+    
+    /* 
+    // Create an array with the unshuffled values
+      var unshuffledArray = new Array(VALUES_PER_LAYER);
+      unshuffledArray[0] = 0;
+      unshuffledArray[1] = 0.37109375;
+      unshuffledArray[2] = 0.62109375;
+      unshuffledArray[3] = 0.62109375;
+      unshuffledArray[4] = 0.87109375;
+      unshuffledArray[5] = 0.87109375;
+      unshuffledArray[6] = 0.1953125;
+      unshuffledArray[7] = 0.1953125;
+      
+            */
+        </script>
+    

